@@ -2,7 +2,7 @@
   "name": "image-compressor",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://warrenferns.github.io/Image-Compressor/",
+  "homepage": "https://githubcrce.github.io/Image-Compressor/",
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
