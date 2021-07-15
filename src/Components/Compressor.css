@@ -63,3 +63,11 @@
   top: 0;
   opacity: 0;
 }
+
+.FileInfo > p {
+  margin: 0;  
+}
+
+.fileSize::after {
+  content: "KB";
+}

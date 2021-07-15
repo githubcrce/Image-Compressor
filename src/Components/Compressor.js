@@ -15,6 +15,8 @@ function Compressor(){
   const [ clicked, setClicked ] = useState(false);
   const [ uploadImage, setUploadImage ] = useState(false);
   const [ outputFileName, setOutputFileName ] = useState("");
+  const [imageSize, setImageSize] = useState(0);
+  const [compressedImageSize, setCompressedImageSize] = useState(0);
 
   function uploadLink(event){
     const imageFile = event.target.files[0];
@@ -22,6 +24,9 @@ function Compressor(){
     setOriginalImage(imageFile);
     setOutputFileName(imageFile.name);
     setUploadImage(true);
+    // get file size from originalImage;
+    setImageSize(imageFile.size);
+   
   }
 
   function click(e){
@@ -34,7 +39,7 @@ function Compressor(){
       initialQuality: 0.5
     };
 
-    if (options.maxSizeMB >= originalImage.size / 1024) {
+    if (options.maxSizeMB >= Math.floor(imageSize / 1024)) {
       alert("This image is already compressed fully");
       return 0;
     }
@@ -43,12 +48,19 @@ function Compressor(){
     imageCompression(originalImage, options).then(x => {
       output = x;
       const downloadLink = URL.createObjectURL(output);
+      setCompressedImageSize(x.size);
       setCompressedLink(downloadLink);
     });
 
     setClicked(true);
     return 1;
+ 
+
   };
+   // make a percentage for deviation between imageSize and compressedImageSize
+   const percentage = (imageSize - compressedImageSize) / imageSize;
+   const deviation = Math.round(percentage * 100);
+
 
   return(
     <div className="mainContainer">
@@ -74,7 +86,8 @@ function Compressor(){
                 src={Upload}
               ></Card.Img>
             )}
-            <div className="d-flex justify-content-center upload-btn-wrapper">
+            <div className="d-flex flex-column justify-content-center upload-btn-wrapper">
+            <p className="fileSize">Size: {Math.round(imageSize/1024)}</p>
             <button class="btn btn-dark">UPLOAD</button>
               <input
                 type="file"
@@ -105,14 +118,21 @@ function Compressor(){
           <div className="col-xl-4 col-lg-4 col-md-12 col-sm-12 mt-3">
             <Card.Img className="image" variant="top" src={compressedLink}></Card.Img>
             {clicked ? (
-              <div className="d-flex justify-content-center">
+              <div className="d-flex flex-column justify-content-start">
+                <div className="FileInfo d-flex flex-column justify-content-start">
+                <p className="fileSize">Size: {Math.round(compressedImageSize/1024)}</p>
+                <p className="deviation">
+                  Compressed {deviation}%
+                </p>
+                </div>
                 <a
                   href={compressedLink}
                   download={outputFileName}
-                  className="mt-2 btn btn-dark w-75"
+                  className="btn btn-dark w-75 align-self-center"
                 >
                   DOWNLOAD
                 </a>
+
               </div>
             ) : (
               <Card.Img
