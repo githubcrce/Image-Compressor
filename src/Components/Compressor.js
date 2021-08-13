@@ -15,8 +15,9 @@ function Compressor(){
   const [ clicked, setClicked ] = useState(false);
   const [ uploadImage, setUploadImage ] = useState(false);
   const [ outputFileName, setOutputFileName ] = useState("");
-  const [imageSize, setImageSize] = useState(0);
-  const [compressedImageSize, setCompressedImageSize] = useState(0);
+  const [ imageSize, setImageSize ] = useState(0);
+  const [ compressedImageSize, setCompressedImageSize ] = useState(0);
+  const [ quality, setQuality ] = useState("0.15");
 
   function uploadLink(event){
     const imageFile = event.target.files[0];
@@ -31,12 +32,11 @@ function Compressor(){
 
   function click(e){
     e.preventDefault();
-
     const options = {
       maxSizeMB: 3,
       maxWidthOrHeight: 800,
       useWebWorker: true,
-      initialQuality: 0.5
+      initialQuality: quality
     };
 
     if (options.maxSizeMB >= Math.floor(imageSize / 1024)) {
@@ -57,6 +57,7 @@ function Compressor(){
  
 
   };
+  
    // make a percentage for deviation between imageSize and compressedImageSize
    const percentage = (imageSize - compressedImageSize) / imageSize;
    const deviation = Math.round(percentage * 100);
@@ -95,21 +96,35 @@ function Compressor(){
                 className="mt-2 btn btn-dark w-75"
                 onChange={event => uploadLink(event)}
               />
-
-
-
             </div>
           </div>
           <div className="col-xl-4 col-lg-4 col-md-12 mb-5 mt-4 col-sm-12 d-flex justify-content-center align-items-baseline">
             <br />
             {outputFileName ? (
-              <button
-                type="button"
-                className=" btn btn-dark"
-                onClick={e => click(e)}
-              >
-                Compress
-              </button>
+              <div className="compress-info">
+                <form>
+                  <label>
+                    Quality :&nbsp;
+                    <select value={quality}
+                    onChange={(e) =>
+                      setQuality(e.target.value)
+                    }>
+                      <option value="0.15">15%</option>
+                      <option value="0.25">25%</option>
+                      <option selected value="0.50">50%</option>
+                      <option value="0.75">75%</option>
+                    </select>
+                  </label>
+                </form>
+                <br />
+                <button
+                  type="button"
+                  className=" btn btn-dark"
+                  onClick={e => click(e)}
+                >
+                  Compress
+                </button>
+              </div>
             ) : (
               <></>
             )}
@@ -122,7 +137,7 @@ function Compressor(){
                 <div className="FileInfo d-flex flex-column justify-content-start">
                 <p className="fileSize">Size: {Math.round(compressedImageSize/1024)}</p>
                 <p className="deviation">
-                  Compressed {deviation}%
+                  Compressed: {deviation}%
                 </p>
                 </div>
                 <a
